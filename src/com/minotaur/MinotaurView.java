@@ -39,17 +39,12 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 
 		/** Handle to the surface manager object we interact with */
 		private SurfaceHolder surfaceHolder;
-		/** What to draw for the Lander in its normal state */
-		private Drawable testImage;
-        /** The drawable to use as the background of the animation canvas */
-        private Bitmap backgroundImage;
-
-		private Paint testPaint;
-
-		private RectF testRect;
 		
 		private int canvasWidth = 1;
 		private int canvasHeight = 1;
+		
+		private GameState gameState;
+		private Renderer renderer;
 
 		public MinotaurThread(SurfaceHolder theSurfaceHolder, Context theContext,
 				Handler theHandler) {
@@ -57,28 +52,19 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			surfaceHolder = theSurfaceHolder;
 			handler = theHandler;
 			context = theContext;
-
-			Resources res = context.getResources();
-			// cache handles to our key sprites & other drawables
-			testImage = context.getResources()
-					.getDrawable(R.drawable.icon);
-			backgroundImage = BitmapFactory.decodeResource(res,
-                    R.drawable.icon);
-
-
-			testPaint = new Paint();
-			testPaint.setAntiAlias(true);
-			testPaint.setARGB(0, 255, 0, 0);
-
-			testRect = new RectF(0, 0, 0, 0);
+			
+			gameState = new GameState();
+			renderer = new Renderer(theContext);
 		}
 
 		/**
 		 * Starts the game, setting parameters for the current difficulty.
 		 */
-		public void doStart() {
-			synchronized (surfaceHolder) {
-
+		public void doStart() 
+		{
+			synchronized (surfaceHolder) 
+			{
+				gameState = new GameState();
 			}
 		}
 
@@ -95,12 +81,13 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 					{
 						if (mode == STATE_RUNNING)
 						{
-							//updateGame();
+							//gameState.update();
 						}
 						
-						render(c);
+						renderer.render(c, gameState);
 				    }
-				} finally 
+				} 
+				finally 
 				{
 					// do this in a finally so that if an exception is thrown
 					// during the above, we don't leave the Surface in an
@@ -112,22 +99,6 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 				}
 			}
 		}
-		
-        /**
-         * Draws the ship, fuel/speed bars, and background to the provided
-         * Canvas.
-         */
-        private void render(Canvas canvas) {
-            // Draw the background image. Operations on the Canvas accumulate
-            // so this is like clearing the screen.
-            canvas.drawBitmap(backgroundImage, 0, 0, null);
-            
-            testRect.set(20, 20, 20, 20);
-            canvas.drawRect(testRect, testPaint);
-            
-            testImage.setBounds(30, 30, 30, 30);
-            testImage.draw(canvas);
-        }
         
         /**
          * Used to signal the thread whether it should be running or not.
@@ -181,7 +152,8 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
                 canvasHeight = height;
 
                 // don't forget to resize the background image
-                backgroundImage = Bitmap.createScaledBitmap(backgroundImage, width, height, true);
+                //TODO: need to pass the size in instead or something
+                //backgroundImage = Bitmap.createScaledBitmap(backgroundImage, width, height, true);
             }
         }
 
