@@ -14,16 +14,16 @@ import android.graphics.drawable.Drawable;
 
 public class Renderer
 {
-    /** The drawable to use as the background of the animation canvas */
-    private Bitmap backgroundImage;
+	/** The drawable to use as the background of the animation canvas */
+	private Bitmap backgroundImage;
 	private Paint testPaint;
-	private RectF testRect;	
+	private RectF testRect;
 	private Drawable testImage;
-	
+
 	public Renderer(Context context)
 	{
 		Resources res = context.getResources();
-		// cache handles to our key sprites & other drawables
+
 		testImage = context.getResources().getDrawable(R.drawable.icon);
 		backgroundImage = BitmapFactory.decodeResource(res, R.drawable.icon);
 
@@ -33,17 +33,14 @@ public class Renderer
 
 		testRect = new RectF(0, 0, 0, 0);
 	}
-	
+
 	public void render(Canvas c, GameState game)
 	{
-        // Draw the background image. Operations on the Canvas accumulate
-        // so this is like clearing the screen.
-		
-        c.drawBitmap(backgroundImage, 0, 0, null);
-        
-        testImage.setBounds(30, 30, 30, 30);
-        testImage.draw(c);
-		
+		c.drawBitmap(backgroundImage, 0, 0, null);
+
+		testImage.setBounds(30, 30, 30, 30);
+		testImage.draw(c);
+
 		for (int col = 0; col < MAZE_COLS; col++)
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
@@ -58,6 +55,5 @@ public class Renderer
 			}
 		}
 	}
-	
-	
+
 }
