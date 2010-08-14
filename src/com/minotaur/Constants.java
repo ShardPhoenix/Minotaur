@@ -23,5 +23,4 @@ public class Constants
 	
 	public static final int NUMBER_TREASURE_PICKUPS = 8;
 	public static final int TREASURE_SCORE_CONSTANT = 50;
-	
 }
