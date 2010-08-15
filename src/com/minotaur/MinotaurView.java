@@ -1,5 +1,9 @@
 package com.minotaur;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Handler;
@@ -39,6 +43,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 
 		private GameState gameState;
 		private Renderer renderer;
+		private Set<Integer> keysHeld;
 
 		public MinotaurThread(SurfaceHolder theSurfaceHolder, Context theContext, Handler theHandler)
 		{
@@ -49,6 +54,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 
 			gameState = new GameState();
 			renderer = new Renderer(theContext);
+			keysHeld = new HashSet<Integer>();
 		}
 
 		/**
@@ -58,7 +64,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				gameState = new GameState();
+				setState(STATE_RUNNING);
 			}
 		}
 
@@ -73,9 +79,9 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder)
 					{
-						if (mode == STATE_RUNNING)
+						if (true)//(mode == STATE_RUNNING)
 						{
-							// gameState.update();
+							gameState.update(keysHeld);
 						}
 
 						renderer.render(c, gameState);
@@ -110,14 +116,20 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 
 		public boolean doKeyDown(int keyCode, KeyEvent msg)
 		{
-			// TODO Auto-generated method stub
-			return false;
+			synchronized (surfaceHolder) 
+			{
+				keysHeld.add(keyCode);
+				return true;
+			}
 		}
 
 		public boolean doKeyUp(int keyCode, KeyEvent msg)
 		{
-			// TODO Auto-generated method stub
-			return false;
+			synchronized (surfaceHolder) 
+			{
+				keysHeld.remove(keyCode);
+				return true;
+			}
 		}
 
 		/**

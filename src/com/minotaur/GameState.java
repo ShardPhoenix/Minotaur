@@ -3,9 +3,10 @@ package com.minotaur;
 import static com.minotaur.Constants.MAZE_COLS;
 import static com.minotaur.Constants.MAZE_ROWS;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class GameState
 {
@@ -27,18 +28,19 @@ public class GameState
 		minotaur = new Minotaur(new Coord(4, 4));
 		player = new Player(new Coord(1, 1));
 		
-		try
-		{
-			maze = generateMaze();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		maze = generateMaze();
 
 		startTime = System.currentTimeMillis();
 
 		levelNum = 1;
+	}
+
+	public void update(Set<Integer> keysHeld)
+	{
+		Input input = new Input(keysHeld);
+		
+		player.update(input, maze, minotaur);
+		
 	}
 
 	private MazeCell[][] generateMaze()
@@ -55,11 +57,12 @@ public class GameState
 		}
 
 		Coord bottomRight =  new Coord(MAZE_COLS - 2, MAZE_ROWS - 2);
-		return generateMaze3(initialMaze, new ArrayList<Coord>(), bottomRight);
+		return generateMaze(initialMaze, new ArrayList<Coord>(), bottomRight);
 	}
 	
 	//using a loop instead of recursion to avoid stack overflow
-	private MazeCell[][] generateMaze3(MazeCell[][] currentMaze, List<Coord> stack, Coord currentCoord)
+	//TODO: figure out if the overflow is caused by a bug in the algo
+	private MazeCell[][] generateMaze(MazeCell[][] currentMaze, List<Coord> stack, Coord currentCoord)
 	{
 		do
 		{
@@ -104,7 +107,7 @@ public class GameState
 		List<Coord> goodCoords = new ArrayList<Coord>();
 		for (Coord coord : coords)
 		{
-			//don't go outside array or re-visit visited cells
+			//don't include outer walls or already visited cells
 			if (coord.col < MAZE_COLS && coord.col > 0 && coord.row < MAZE_ROWS && coord.row > 0
 					&& currentMaze[coord.col][coord.row].visited == false)
 			{
@@ -128,5 +131,4 @@ public class GameState
 			currentMaze[currentCoord.col][wallToRemoveRow].isWall = false;
 		}
 	}
-
 }

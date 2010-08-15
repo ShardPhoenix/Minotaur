@@ -14,9 +14,10 @@ import android.graphics.drawable.Drawable;
 
 public class Renderer
 {
-	/** The drawable to use as the background of the animation canvas */
 	private Bitmap backgroundImage;
 	private Paint testPaint;
+	private Paint playerPaint;
+	private Paint backgroundPaint;
 	private RectF testRect;
 	private Drawable testImage;
 
@@ -30,16 +31,38 @@ public class Renderer
 		testPaint = new Paint();
 		testPaint.setAntiAlias(true);
 		testPaint.setARGB(255, 255, 0, 0);
+		
+		playerPaint = new Paint();
+		playerPaint.setAntiAlias(true);
+		playerPaint.setARGB(255, 0, 255, 0);
+		
+		backgroundPaint = new Paint();
+		backgroundPaint.setAntiAlias(true);
+		backgroundPaint.setARGB(255, 0, 0, 0);
+		
 
 		testRect = new RectF(0, 0, 0, 0);
+	}
+	
+	private int colToX(int col)
+	{
+		return Constants.MAZE_CELL_WIDTH * col + Constants.MAZE_LEFT_MARGIN;
+	}
+	
+	private int rowToY(int row)
+	{
+		return Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN;
 	}
 
 	public void render(Canvas c, GameState game)
 	{
-		c.drawBitmap(backgroundImage, 0, 0, null);
+		//c.drawBitmap(backgroundImage, 0, 0, null);
+		
+		testRect.set(0, 0, 500, 500);
+		c.drawRect(testRect, backgroundPaint);
 
-		testImage.setBounds(30, 30, 30, 30);
-		testImage.draw(c);
+		//testImage.setBounds(30, 30, 30, 30);
+		//testImage.draw(c);
 
 		for (int col = 0; col < MAZE_COLS; col++)
 		{
@@ -54,6 +77,11 @@ public class Renderer
 				}
 			}
 		}
+		
+		int x = colToX(game.player.coord.col);
+		int y = rowToY(game.player.coord.row);
+		testRect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+		c.drawRect(testRect, playerPaint);
 	}
 
 }

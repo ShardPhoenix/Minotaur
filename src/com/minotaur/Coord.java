@@ -6,8 +6,8 @@ package com.minotaur;
  */
 public class Coord
 {
-	public int col;
-	public int row;
+	public final int col;
+	public final int row;
 	
 	public Coord(int col, int row)
 	{
