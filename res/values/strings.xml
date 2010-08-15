@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Minotaur!</string>
+    <string name="hello">Space to bomb</string>
     <string name="app_name">Minotaur</string>
 </resources>

@@ -107,9 +107,7 @@ public class GameState
 		List<Coord> goodCoords = new ArrayList<Coord>();
 		for (Coord coord : coords)
 		{
-			//don't include outer walls or already visited cells
-			if (coord.col < MAZE_COLS && coord.col > 0 && coord.row < MAZE_ROWS && coord.row > 0
-					&& currentMaze[coord.col][coord.row].visited == false)
+			if (coord.isInsideMaze() && currentMaze[coord.col][coord.row].visited == false)
 			{
 				goodCoords.add(coord);
 			}

@@ -38,8 +38,7 @@ public class Renderer
 		
 		backgroundPaint = new Paint();
 		backgroundPaint.setAntiAlias(true);
-		backgroundPaint.setARGB(255, 0, 0, 0);
-		
+		backgroundPaint.setARGB(255, 255, 255, 255);
 
 		testRect = new RectF(0, 0, 0, 0);
 	}

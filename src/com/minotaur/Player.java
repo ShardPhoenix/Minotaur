@@ -24,16 +24,43 @@ public class Player
 	{
 		coord = tryMove(input, maze);
 		
+		bombWalls(input, maze);
+	}
+
+	private void bombWalls(Input input, MazeCell[][] maze)
+	{
+		if (input.bombPressed && System.currentTimeMillis() - lastBombed > Constants.BOMB_DELAY_MILLIS
+				&& bombsLeft > 0)
+		{
+			int col = coord.col;
+			int row = coord.row;
+			Coord[] neighbours = {new Coord(col + 1, row), new Coord(col - 1, row),
+									new Coord(col, row + 1), new Coord(col, row - 1),
+									new Coord(col + 1, row - 1), new Coord(col - 1, row + 1),
+									new Coord(col + 1, row + 1), new Coord(col - 1, row - 1)};
+			
+			for (Coord coord : neighbours)
+			{
+				if (coord.isInsideMaze())
+				{
+					maze[coord.col][coord.row].isWall = false;
+				}
+			}
+			
+			bombsLeft--;
+			lastBombed = System.currentTimeMillis();
+		}
+		
 	}
 
 	private Coord tryMove(Input input, MazeCell[][] maze)
 	{
 		Coord newCoord = new Coord(coord.col + input.deltaCol, coord.row + input.deltaRow);
 		
-		if (newCoord.col < MAZE_COLS && newCoord.col > 0 && newCoord.row < MAZE_ROWS && newCoord.row > 0
-				&& !maze[newCoord.col][newCoord.row].isWall
+		if (newCoord.isInsideMaze() && !maze[newCoord.col][newCoord.row].isWall
 				&& System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
+			lastCoord = coord;
 			lastMoved = System.currentTimeMillis();
 			return newCoord;
 		}
