@@ -17,7 +17,7 @@ public class Constants
 	public static final int NUMBER_BOMB_PICKUPS = 2;
 	public static final int FREE_BOMB_PER = 5000;
 	
-	public static final double INITIAL_PLAYER_MILLIS_PER_MOVE = 75.0;
+	public static final double INITIAL_PLAYER_MILLIS_PER_MOVE = 50.0;
 	public static final double INITIAL_MINOTAUR_MILLIS_PER_MOVE = 220.0;
 	public static final double MINOTAUR_SPEED_UP = 0.92;
 	public static final int MINOTAUR_START_DELAY = 4000;

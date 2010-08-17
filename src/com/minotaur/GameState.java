@@ -26,7 +26,7 @@ public class GameState
 
 	public GameState()
 	{
-		minotaur = new Minotaur(new Coord(4, 4));
+		minotaur = new Minotaur(new Coord(4, 4)); //TODO: start at proper location
 		player = new Player(new Coord(1, 1));
 		
 		maze = generateMaze();
@@ -107,7 +107,6 @@ public class GameState
 			}
 		}
 		
-		
 		return initialMaze;
 	}
 
@@ -141,6 +140,7 @@ public class GameState
 
 	//using a loop instead of recursion to avoid stack overflow
 	//TODO: figure out if the overflow is caused by a bug in the algo
+	//TODO: seems to produce overly long double-back corridors in this version
 	private MazeCell[][] generateMaze(MazeCell[][] currentMaze, List<Coord> stack, Coord currentCoord)
 	{
 		do

@@ -22,6 +22,7 @@ public class Renderer
 	private Drawable testImage;
 	private Paint bombPaint;
 	private Paint treasurePaint;
+	private Paint minotaurPaint;
 
 	public Renderer(Context context)
 	{
@@ -46,21 +47,15 @@ public class Renderer
 		playerPaint.setAntiAlias(true);
 		playerPaint.setARGB(255, 0, 255, 0);
 		
+		minotaurPaint = new Paint();
+		minotaurPaint.setAntiAlias(true);
+		minotaurPaint.setARGB(255, 102, 51, 0);
+		
 		backgroundPaint = new Paint();
 		backgroundPaint.setAntiAlias(true);
 		backgroundPaint.setARGB(255, 255, 255, 255);
 
 		rect = new RectF(0, 0, 0, 0);
-	}
-	
-	private int colToX(int col)
-	{
-		return Constants.MAZE_CELL_WIDTH * col + Constants.MAZE_LEFT_MARGIN;
-	}
-	
-	private int rowToY(int row)
-	{
-		return Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN;
 	}
 
 	public void render(Canvas c, GameState game)
@@ -96,10 +91,42 @@ public class Renderer
 			}
 		}
 		
-		int x = colToX(game.player.coord.col);
-		int y = rowToY(game.player.coord.row);
-		rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-		c.drawRect(rect, playerPaint);
+		renderMoverSmoothly(c, game.player, playerPaint);
+		renderMoverSmoothly(c, game.minotaur, minotaurPaint);
 	}
-
+	
+	private void renderMoverSmoothly(Canvas c, Mover m, Paint p)
+	{
+		long timeSinceMoved = System.currentTimeMillis() - m.lastMoved;
+		double ratio = timeSinceMoved/m.millisPerMove < 1.0 ? timeSinceMoved/m.millisPerMove : 1.0;
+		double xDelta = (m.coord.col - m.lastCoord.col) * ratio;
+		double yDelta = (m.coord.row - m.lastCoord.row) * ratio;
+		
+		int x = colToX(m.lastCoord.col + xDelta);
+		int y = rowToY(m.lastCoord.row + yDelta);
+		
+		rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+		c.drawRect(rect, p);
+	}
+	
+	
+	private int colToX(int col)
+	{
+		return Constants.MAZE_CELL_WIDTH * col + Constants.MAZE_LEFT_MARGIN;
+	}
+	
+	private int rowToY(int row)
+	{
+		return Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN;
+	}
+	
+	private int colToX(double col)
+	{
+		return (int) Math.round(Constants.MAZE_CELL_WIDTH * col + Constants.MAZE_LEFT_MARGIN);
+	}
+	
+	private int rowToY(double row)
+	{
+		return (int) Math.round(Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN);
+	}
 }

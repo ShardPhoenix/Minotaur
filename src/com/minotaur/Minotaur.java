@@ -3,13 +3,9 @@ package com.minotaur;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Minotaur
+public class Minotaur extends Mover
 {
-	public Coord coord;
 	public List<Coord> route;
-	public long lastMoved;
-	public Coord lastCoord;
-	public double millisPerMove;
 	public Coord startCoord;
 	
 	public Minotaur(Coord c)

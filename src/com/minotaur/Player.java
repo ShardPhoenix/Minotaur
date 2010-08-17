@@ -3,12 +3,8 @@ package com.minotaur;
 import static com.minotaur.Constants.MAZE_COLS;
 import static com.minotaur.Constants.MAZE_ROWS;
 
-public class Player
+public class Player extends Mover
 {
-	public Coord coord;
-	public long lastMoved;
-	public Coord lastCoord;
-	public double millisPerMove;
 	public int bombsLeft;
 	public long lastBombed;
 	
