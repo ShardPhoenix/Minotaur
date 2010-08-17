@@ -15,11 +15,13 @@ import android.graphics.drawable.Drawable;
 public class Renderer
 {
 	private Bitmap backgroundImage;
-	private Paint testPaint;
+	private Paint mazePaint;
 	private Paint playerPaint;
 	private Paint backgroundPaint;
-	private RectF testRect;
+	private RectF rect;
 	private Drawable testImage;
+	private Paint bombPaint;
+	private Paint treasurePaint;
 
 	public Renderer(Context context)
 	{
@@ -28,9 +30,17 @@ public class Renderer
 		testImage = context.getResources().getDrawable(R.drawable.icon);
 		backgroundImage = BitmapFactory.decodeResource(res, R.drawable.icon);
 
-		testPaint = new Paint();
-		testPaint.setAntiAlias(true);
-		testPaint.setARGB(255, 255, 0, 0);
+		mazePaint = new Paint();
+		mazePaint.setAntiAlias(true);
+		mazePaint.setARGB(255, 0, 0, 0);
+		
+		bombPaint = new Paint();
+		bombPaint.setAntiAlias(true);
+		bombPaint.setARGB(255, 255, 0, 0);
+		
+		treasurePaint = new Paint();
+		treasurePaint.setAntiAlias(true);
+		treasurePaint.setARGB(255, 255, 255, 0);
 		
 		playerPaint = new Paint();
 		playerPaint.setAntiAlias(true);
@@ -40,7 +50,7 @@ public class Renderer
 		backgroundPaint.setAntiAlias(true);
 		backgroundPaint.setARGB(255, 255, 255, 255);
 
-		testRect = new RectF(0, 0, 0, 0);
+		rect = new RectF(0, 0, 0, 0);
 	}
 	
 	private int colToX(int col)
@@ -57,8 +67,8 @@ public class Renderer
 	{
 		//c.drawBitmap(backgroundImage, 0, 0, null);
 		
-		testRect.set(0, 0, 500, 500);
-		c.drawRect(testRect, backgroundPaint);
+		rect.set(0, 0, 500, 500);
+		c.drawRect(rect, backgroundPaint);
 
 		//testImage.setBounds(30, 30, 30, 30);
 		//testImage.draw(c);
@@ -67,20 +77,29 @@ public class Renderer
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
+				int x = game.maze[col][row].x;
+				int y = game.maze[col][row].y;
+				rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+				
 				if (game.maze[col][row].isWall)
 				{
-					int x = game.maze[col][row].x;
-					int y = game.maze[col][row].y;
-					testRect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-					c.drawRect(testRect, testPaint);
+					c.drawRect(rect, mazePaint);
+				}
+				else if (game.maze[col][row].hasBomb)
+				{
+					c.drawRect(rect, bombPaint);
+				}
+				else if (game.maze[col][row].hasTreasure)
+				{
+					c.drawRect(rect, treasurePaint);
 				}
 			}
 		}
 		
 		int x = colToX(game.player.coord.col);
 		int y = rowToY(game.player.coord.row);
-		testRect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-		c.drawRect(testRect, playerPaint);
+		rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+		c.drawRect(rect, playerPaint);
 	}
 
 }

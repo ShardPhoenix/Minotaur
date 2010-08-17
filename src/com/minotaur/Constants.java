@@ -4,6 +4,7 @@ public class Constants
 {
 	public static final int MAZE_CELL_WIDTH = 16; //pixels
 	
+	//must be odd numbers
 	public static final int MAZE_COLS = 19;
 	public static final int MAZE_ROWS = 27;
 	
@@ -21,6 +22,6 @@ public class Constants
 	public static final double MINOTAUR_SPEED_UP = 0.92;
 	public static final int MINOTAUR_START_DELAY = 4000;
 	
-	public static final int NUMBER_TREASURE_PICKUPS = 8;
+	public static final int NUMBER_TREASURE_PICKUPS = 6;
 	public static final int TREASURE_SCORE_CONSTANT = 50;
 }
