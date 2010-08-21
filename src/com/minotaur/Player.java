@@ -1,12 +1,11 @@
 package com.minotaur;
 
-import static com.minotaur.Constants.MAZE_COLS;
-import static com.minotaur.Constants.MAZE_ROWS;
-
 public class Player extends Mover
 {
 	public int bombsLeft;
 	public long lastBombed;
+	public boolean isDead;
+	public boolean escaped;
 	
 	public Player(Coord c)
 	{
@@ -21,6 +20,15 @@ public class Player extends Mover
 		coord = tryMove(input, maze);
 		
 		bombWalls(input, maze);
+		
+		if (coord.equals(minotaur.coord))
+		{
+			isDead = true;
+		}
+		else if (coord.equals(maze[Constants.MAZE_COLS - 2][Constants.MAZE_ROWS - 2].coord))
+		{
+			escaped = true;
+		}
 	}
 
 	private void bombWalls(Input input, MazeCell[][] maze)

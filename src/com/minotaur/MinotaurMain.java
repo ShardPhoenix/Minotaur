@@ -30,7 +30,7 @@ public class MinotaurMain extends Activity
 		if (savedInstanceState == null)
 		{
 			// we were just launched: set up a new game
-			minotaurThread.setState(MinotaurThread.STATE_READY);
+			minotaurThread.setState(GameMode.STATE_RUNNING);
 			Log.w(this.getClass().getName(), "SIS is null");
 		}
 		else

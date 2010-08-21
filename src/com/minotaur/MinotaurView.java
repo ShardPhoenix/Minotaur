@@ -18,19 +18,10 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 {
 	class MinotaurThread extends Thread
 	{
-		/*
-		 * State-tracking constants
-		 */
-		public static final int STATE_LOSE = 1;
-		public static final int STATE_PAUSE = 2;
-		public static final int STATE_READY = 3;
-		public static final int STATE_RUNNING = 4;
-		public static final int STATE_WIN = 5;
-
 		/** Indicate whether the surface has been created & is ready to draw */
 		private boolean run = false;
 		/** The state of the game. One of READY, RUNNING, PAUSE, LOSE, or WIN */
-		private int mode;
+		private GameMode mode;
 
 		/** Message handler used by thread to interact with TextView */
 		private Handler handler;
@@ -41,7 +32,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		private int canvasWidth = 1;
 		private int canvasHeight = 1;
 
-		private GameState gameState;
+		private GameModel gameState;
 		private Renderer renderer;
 		private Set<Integer> keysHeld;
 
@@ -52,9 +43,11 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			handler = theHandler;
 			context = theContext;
 
-			gameState = new GameState();
+			gameState = new GameModel();
 			renderer = new Renderer(theContext);
 			keysHeld = new HashSet<Integer>();
+			
+			doStart();
 		}
 
 		/**
@@ -64,7 +57,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				setState(STATE_RUNNING);
+				setState(GameMode.STATE_RUNNING);
 			}
 		}
 
@@ -79,12 +72,12 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder)
 					{
-						if (true)//(mode == STATE_RUNNING)
+						if (mode == GameMode.STATE_RUNNING)
 						{
-							gameState.update(keysHeld);
+							setState(gameState.update(keysHeld));
 						}
 
-						renderer.render(c, gameState);
+						renderer.render(c, mode, gameState);
 					}
 				}
 				finally
@@ -139,8 +132,10 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				if (mode == STATE_RUNNING)
-					setState(STATE_PAUSE);
+				if (mode == GameMode.STATE_RUNNING)
+				{
+					setState(GameMode.STATE_PAUSE);
+				}
 			}
 		}
 
@@ -152,7 +147,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		 * @param mode
 		 *            one of the STATE_* constants
 		 */
-		public void setState(int mode)
+		public void setState(GameMode mode)
 		{
 			synchronized (surfaceHolder)
 			{

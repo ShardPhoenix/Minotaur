@@ -23,6 +23,7 @@ public class Renderer
 	private Paint bombPaint;
 	private Paint treasurePaint;
 	private Paint minotaurPaint;
+	private Paint exitPaint;
 
 	public Renderer(Context context)
 	{
@@ -51,6 +52,10 @@ public class Renderer
 		minotaurPaint.setAntiAlias(true);
 		minotaurPaint.setARGB(255, 102, 51, 0);
 		
+		exitPaint = new Paint();
+		exitPaint.setAntiAlias(true);
+		exitPaint.setARGB(255, 0, 0, 255);
+		
 		backgroundPaint = new Paint();
 		backgroundPaint.setAntiAlias(true);
 		backgroundPaint.setARGB(255, 255, 255, 255);
@@ -58,13 +63,39 @@ public class Renderer
 		rect = new RectF(0, 0, 0, 0);
 	}
 
-	public void render(Canvas c, GameState game)
+	public void render(Canvas c, GameMode mode, GameModel game)
 	{
 		//c.drawBitmap(backgroundImage, 0, 0, null);
 		
 		rect.set(0, 0, 500, 500);
 		c.drawRect(rect, backgroundPaint);
+		
+		switch (mode)
+		{
+			case STATE_RUNNING:
+				renderGameplay(c, game);
+				break;
+			case STATE_WIN:
+				renderVictory(c, game);
+				break;
+			case STATE_LOSE:
+				renderLoss(c, game);
+				break;
+		}
+	}
 
+	private void renderLoss(Canvas c, GameModel game)
+	{
+		c.drawText("You died!", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+	}
+
+	private void renderVictory(Canvas c, GameModel game)
+	{
+		c.drawText("You escaped!", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+	}
+
+	private void renderGameplay(Canvas c, GameModel game)
+	{
 		//testImage.setBounds(30, 30, 30, 30);
 		//testImage.draw(c);
 
@@ -80,13 +111,17 @@ public class Renderer
 				{
 					c.drawRect(rect, mazePaint);
 				}
-				else if (game.maze[col][row].hasBomb)
+				if (game.maze[col][row].hasTreasure)
+				{
+					c.drawRect(rect, treasurePaint);
+				}
+				if (game.maze[col][row].hasBomb)
 				{
 					c.drawRect(rect, bombPaint);
 				}
-				else if (game.maze[col][row].hasTreasure)
+				if (game.maze[col][row].isExit)
 				{
-					c.drawRect(rect, treasurePaint);
+					c.drawRect(rect, exitPaint);
 				}
 			}
 		}

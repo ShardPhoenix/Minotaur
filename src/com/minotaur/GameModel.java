@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class GameState
+public class GameModel
 {
 	public Minotaur minotaur;
 	public Player player;
@@ -24,19 +24,20 @@ public class GameState
 	public int score;
 	public int levelNum;
 
-	public GameState()
+	public GameModel()
 	{
-		minotaur = new Minotaur(new Coord(4, 4)); //TODO: start at proper location
+		maze = generateMaze();
+		
+		minotaur = new Minotaur(getMinotaurStart());
 		player = new Player(new Coord(1, 1));
 		
-		maze = generateMaze();
 
 		startTime = System.currentTimeMillis();
-
+		
 		levelNum = 1;
 	}
 
-	public void update(Set<Integer> keysHeld)
+	public GameMode update(Set<Integer> keysHeld)
 	{
 		Input input = new Input(keysHeld);
 		
@@ -44,6 +45,16 @@ public class GameState
 		
 		updatePickups();
 		
+		if (player.isDead)
+		{
+			return GameMode.STATE_LOSE;
+		}
+		if (player.escaped)
+		{
+			return GameMode.STATE_WIN;
+		}
+		
+		return GameMode.STATE_RUNNING;
 	}
 
 	private void updatePickups()
@@ -81,7 +92,16 @@ public class GameState
 		
 		initialMaze = addPickups(initialMaze);
 		
+		initialMaze[bottomRight.col][bottomRight.row].isExit = true;
+		
 		return initialMaze;
+	}
+	
+	private Coord getMinotaurStart()
+	{
+		List<MazeCell> spaces = getLowerRightSpaces(maze);
+		Collections.shuffle(spaces);
+		return spaces.get(0).coord;
 	}
 	
 	private MazeCell[][] addPickups(MazeCell[][] initialMaze)
@@ -127,6 +147,25 @@ public class GameState
 		
 		return deadEnds;
 	}
+	
+	private List<MazeCell> getLowerRightSpaces(MazeCell[][] maze2)
+	{
+		List<MazeCell> spaces = new ArrayList<MazeCell>();
+		for (int col = Constants.MAZE_COLS/2; col < Constants.MAZE_COLS; col++)
+		{
+			for (int row = Constants.MAZE_ROWS/2; row < Constants.MAZE_ROWS; row++)
+			{
+				MazeCell cell = maze2[col][row];
+				if (!cell.isWall)
+				{
+					spaces.add(cell);
+				}
+			}
+		}
+		
+		return spaces;
+	}
+	
 
 	private boolean has3Walls(MazeCell cell, MazeCell[][] maze2)
 	{
