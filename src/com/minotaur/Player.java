@@ -30,6 +30,15 @@ public class Player extends Mover
 			escaped = true;
 		}
 	}
+	
+	public void nextLevel()
+	{
+		Coord c = new Coord(1, 1);
+		coord = c;
+		lastCoord = c;
+		isDead = false;
+		escaped = false;
+	}
 
 	private void bombWalls(Input input, MazeCell[][] maze)
 	{

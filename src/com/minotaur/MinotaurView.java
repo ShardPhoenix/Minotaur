@@ -32,7 +32,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		private int canvasWidth = 1;
 		private int canvasHeight = 1;
 
-		private GameModel gameState;
+		private GameModel gameModel;
 		private Renderer renderer;
 		private Set<Integer> keysHeld;
 
@@ -43,7 +43,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			handler = theHandler;
 			context = theContext;
 
-			gameState = new GameModel();
+			gameModel = new GameModel();
 			renderer = new Renderer(theContext);
 			keysHeld = new HashSet<Integer>();
 			
@@ -74,10 +74,21 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 					{
 						if (mode == GameMode.STATE_RUNNING)
 						{
-							setState(gameState.update(keysHeld));
+							setState(gameModel.update(keysHeld));
 						}
 
-						renderer.render(c, mode, gameState);
+						renderer.render(c, mode, gameModel);
+						
+						if (mode == GameMode.STATE_LOSE && keysHeld.contains(KeyEvent.KEYCODE_SPACE))
+						{
+							gameModel = new GameModel();
+							mode = GameMode.STATE_RUNNING;
+						}
+						if (mode == GameMode.STATE_WIN && keysHeld.contains(KeyEvent.KEYCODE_SPACE))
+						{
+							gameModel.nextLevel();
+							mode = GameMode.STATE_RUNNING;
+						}
 					}
 				}
 				finally
@@ -132,7 +143,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				if (mode == GameMode.STATE_RUNNING)
+				//if (mode == GameMode.STATE_RUNNING)
 				{
 					setState(GameMode.STATE_PAUSE);
 				}

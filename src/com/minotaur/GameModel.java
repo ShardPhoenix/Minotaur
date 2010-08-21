@@ -30,7 +30,6 @@ public class GameModel
 		
 		minotaur = new Minotaur(getMinotaurStart());
 		player = new Player(new Coord(1, 1));
-		
 
 		startTime = System.currentTimeMillis();
 		
@@ -55,6 +54,23 @@ public class GameModel
 		}
 		
 		return GameMode.STATE_RUNNING;
+	}
+	
+	public void nextLevel()
+	{
+		maze = generateMaze();
+		
+		minotaur.nextLevel(getMinotaurStart());
+		player.nextLevel();
+
+		startTime = System.currentTimeMillis();
+		
+		totalTreasures += treasuresGained;
+		score += treasuresGained * Constants.TREASURE_SCORE_CONSTANT;
+		
+		treasuresGained = 0;
+		
+		levelNum++;;
 	}
 
 	private void updatePickups()

@@ -86,12 +86,12 @@ public class Renderer
 
 	private void renderLoss(Canvas c, GameModel game)
 	{
-		c.drawText("You died!", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+		c.drawText("You died! (space to restart)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
 	}
 
 	private void renderVictory(Canvas c, GameModel game)
 	{
-		c.drawText("You escaped!", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+		c.drawText("You escaped! (space to continue)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
 	}
 
 	private void renderGameplay(Canvas c, GameModel game)
@@ -128,6 +128,27 @@ public class Renderer
 		
 		renderMoverSmoothly(c, game.player, playerPaint);
 		renderMoverSmoothly(c, game.minotaur, minotaurPaint);
+		
+		drawIndicators(c, game);
+	}
+
+	private void drawIndicators(Canvas c, GameModel game)
+	{
+		for (int i = 0; i < game.player.bombsLeft; i++)
+		{
+			int x = colToX(Constants.MAZE_COLS);
+			int y = rowToY(Constants.MAZE_ROWS - 1 - i);
+			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+			c.drawRect(rect, bombPaint);
+		}
+		
+		for (int i = 0; i < game.treasuresGained; i++)
+		{
+			int x = colToX(Constants.MAZE_COLS);
+			int y = rowToY(i);
+			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+			c.drawRect(rect, treasurePaint);
+		}
 	}
 	
 	private void renderMoverSmoothly(Canvas c, Mover m, Paint p)
