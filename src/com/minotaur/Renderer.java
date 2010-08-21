@@ -24,6 +24,13 @@ public class Renderer
 	private Paint treasurePaint;
 	private Paint minotaurPaint;
 	private Paint exitPaint;
+	
+	private Drawable bombImage;
+	private Drawable mazeImage;
+	private Drawable treasureImage;
+	private Drawable playerImage;
+	private Drawable minotaurImage;
+	private Drawable dirtImage;
 
 	public Renderer(Context context)
 	{
@@ -31,6 +38,13 @@ public class Renderer
 
 		testImage = context.getResources().getDrawable(R.drawable.icon);
 		backgroundImage = BitmapFactory.decodeResource(res, R.drawable.icon);
+		
+		bombImage = context.getResources().getDrawable(R.drawable.bomb);
+		mazeImage = context.getResources().getDrawable(R.drawable.wall);
+		treasureImage = context.getResources().getDrawable(R.drawable.gold);
+		playerImage = context.getResources().getDrawable(R.drawable.hero);
+		minotaurImage = context.getResources().getDrawable(R.drawable.mino);
+		dirtImage = context.getResources().getDrawable(R.drawable.dirt);
 
 		mazePaint = new Paint();
 		mazePaint.setAntiAlias(true);
@@ -109,15 +123,20 @@ public class Renderer
 				
 				if (game.maze[col][row].isWall)
 				{
-					c.drawRect(rect, mazePaint);
+					drawSquareImage(c, x, y, MAZE_CELL_WIDTH, mazeImage);
 				}
+				else
+				{
+					drawSquareImage(c, x, y, MAZE_CELL_WIDTH, dirtImage);
+				}
+				
 				if (game.maze[col][row].hasTreasure)
 				{
-					c.drawRect(rect, treasurePaint);
+					drawSquareImage(c, x, y, MAZE_CELL_WIDTH, treasureImage);
 				}
 				if (game.maze[col][row].hasBomb)
 				{
-					c.drawRect(rect, bombPaint);
+					drawSquareImage(c, x, y, MAZE_CELL_WIDTH, bombImage);
 				}
 				if (game.maze[col][row].isExit)
 				{
@@ -126,8 +145,8 @@ public class Renderer
 			}
 		}
 		
-		renderMoverSmoothly(c, game.player, playerPaint);
-		renderMoverSmoothly(c, game.minotaur, minotaurPaint);
+		renderMoverSmoothly(c, game.player, playerImage);
+		renderMoverSmoothly(c, game.minotaur, minotaurImage);
 		
 		drawIndicators(c, game);
 	}
@@ -138,20 +157,18 @@ public class Renderer
 		{
 			int x = colToX(Constants.MAZE_COLS);
 			int y = rowToY(Constants.MAZE_ROWS - 1 - i);
-			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-			c.drawRect(rect, bombPaint);
+			drawSquareImage(c, x, y, MAZE_CELL_WIDTH, bombImage);
 		}
 		
 		for (int i = 0; i < game.treasuresGained; i++)
 		{
 			int x = colToX(Constants.MAZE_COLS);
 			int y = rowToY(i);
-			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-			c.drawRect(rect, treasurePaint);
+			drawSquareImage(c, x, y, MAZE_CELL_WIDTH, treasureImage);
 		}
 	}
 	
-	private void renderMoverSmoothly(Canvas c, Mover m, Paint p)
+	private void renderMoverSmoothly(Canvas c, Mover m, Drawable image)
 	{
 		long timeSinceMoved = System.currentTimeMillis() - m.lastMoved;
 		double ratio = timeSinceMoved/m.millisPerMove < 1.0 ? timeSinceMoved/m.millisPerMove : 1.0;
@@ -161,10 +178,14 @@ public class Renderer
 		int x = colToX(m.lastCoord.col + xDelta);
 		int y = rowToY(m.lastCoord.row + yDelta);
 		
-		rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-		c.drawRect(rect, p);
+		drawSquareImage(c, x, y, MAZE_CELL_WIDTH, image);
 	}
 	
+	private void drawSquareImage(Canvas c, int x, int y, int size, Drawable image)
+	{
+		image.setBounds(x, y, x + size, y + size);
+		image.draw(c);
+	}
 	
 	private int colToX(int col)
 	{

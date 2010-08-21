@@ -11,7 +11,16 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int bomb=0x7f020000;
+        public static final int died=0x7f020001;
+        public static final int dirt=0x7f020002;
+        public static final int gold=0x7f020003;
+        public static final int hero=0x7f020004;
+        public static final int icon=0x7f020005;
+        public static final int mino=0x7f020006;
+        public static final int title=0x7f020007;
+        public static final int victory=0x7f020008;
+        public static final int wall=0x7f020009;
     }
     public static final class id {
         public static final int minotaur=0x7f050000;
