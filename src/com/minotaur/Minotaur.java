@@ -39,10 +39,10 @@ public class Minotaur extends Mover
 	private void move()
 	{
 		if (System.currentTimeMillis() - lastMoved > millisPerMove
-				&& route != null)
+				&& route != null && route.size() > 1)
 		{
 			lastCoord = coord;
-			coord = route.get(0);
+			coord = route.get(1);
 			lastMoved = System.currentTimeMillis();
 		}
 	}
