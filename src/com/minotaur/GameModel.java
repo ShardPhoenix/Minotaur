@@ -42,6 +42,8 @@ public class GameModel
 		
 		player.update(input, maze, minotaur);
 		
+		minotaur.update(player.coord, maze);
+		
 		updatePickups();
 		
 		if (player.isDead)

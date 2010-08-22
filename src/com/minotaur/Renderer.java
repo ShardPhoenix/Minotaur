@@ -3,6 +3,9 @@ package com.minotaur;
 import static com.minotaur.Constants.MAZE_CELL_WIDTH;
 import static com.minotaur.Constants.MAZE_COLS;
 import static com.minotaur.Constants.MAZE_ROWS;
+
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -149,6 +152,20 @@ public class Renderer
 		renderMoverSmoothly(c, game.minotaur, minotaurImage);
 		
 		drawIndicators(c, game);
+		
+		debugRenderPath(c, game.maze, game.minotaur.route);
+	}
+
+	private void debugRenderPath(Canvas c, MazeCell[][] maze, List<Coord> route)
+	{
+		for (Coord coord : route)
+		{
+			int x = colToX(coord.col);
+			int y = rowToY(coord.row);
+			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
+			c.drawRect(rect, playerPaint);
+		}
+		
 	}
 
 	private void drawIndicators(Canvas c, GameModel game)
