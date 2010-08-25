@@ -32,7 +32,10 @@ public class Minotaur extends Mover
 	
 	public void update(Coord playerCoord, MazeCell[][] maze)
 	{
-		updateRoute(playerCoord, maze);
+		if (System.currentTimeMillis() - lastMoved > 250)
+		{
+			updateRoute(playerCoord, maze);
+		}
 		move();
 	}
 	
@@ -127,9 +130,9 @@ public class Minotaur extends Mover
 		int col = current.col;
 		int row = current.row;
 		Coord[] neighbours = {new Coord(col + 1, row), new Coord(col - 1, row),
-				new Coord(col, row + 1), new Coord(col, row - 1),
+				new Coord(col, row + 1), new Coord(col, row - 1) /*,
 				new Coord(col + 1, row - 1), new Coord(col - 1, row + 1),
-				new Coord(col + 1, row + 1), new Coord(col - 1, row - 1)};
+				new Coord(col + 1, row + 1), new Coord(col - 1, row - 1) */};
 		for (Coord c : neighbours)
 		{
 			if (c.isInsideMaze() && !closed.contains(c)
@@ -153,6 +156,7 @@ public class Minotaur extends Mover
 			if (f.get(c) < lowestF)
 			{
 				lowestFCoord = c;
+				lowestF = f.get(c);
 			}
 		}
 		return lowestFCoord;

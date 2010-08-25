@@ -13,6 +13,7 @@ public class Player extends Mover
 		lastCoord = c;
 		bombsLeft = Constants.STARTING_BOMBS;
 		millisPerMove = Constants.INITIAL_PLAYER_MILLIS_PER_MOVE;
+		lastBombed = System.currentTimeMillis();
 	}
 
 	public void update(Input input, MazeCell[][] maze, Minotaur minotaur)
