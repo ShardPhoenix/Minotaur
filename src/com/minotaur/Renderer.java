@@ -127,7 +127,7 @@ public class Renderer
 		
 		drawIndicators(c, game);
 		
-		debugRenderPath(c, game.maze, game.minotaur.route);
+		//debugRenderPath(c, game.maze, game.minotaur.route);
 	}
 
 	private void debugRenderPath(Canvas c, MazeCell[][] maze, List<Coord> route)

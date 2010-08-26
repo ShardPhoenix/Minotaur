@@ -5,8 +5,9 @@ import java.util.List;
 
 public class Minotaur extends Mover
 {
-	public List<Coord> route;
+	public volatile List<Coord> route;
 	private PathFinder pathFinder;
+	private int threadCount;
 	
 	public Minotaur(Coord c)
 	{
@@ -31,9 +32,15 @@ public class Minotaur extends Mover
 	
 	public void update(Coord playerCoord, MazeCell[][] maze)
 	{
-		if (System.currentTimeMillis() - lastMoved > 250)
+		//if (System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
 			//route = pathFinder.findRoute(coord, playerCoord, maze);
+			if (threadCount == 0)
+			{
+				threadCount++;
+				Thread pathThread = new PathThread(playerCoord, maze);
+				pathThread.start();
+			}
 		}
 		move();
 	}
@@ -46,6 +53,25 @@ public class Minotaur extends Mover
 			lastCoord = coord;
 			coord = route.get(1);
 			lastMoved = System.currentTimeMillis();
+		}
+	}
+	
+	class PathThread extends Thread
+	{
+		private Coord playerCoord;
+		private MazeCell[][] maze;
+		
+		public PathThread(Coord playerCoord, MazeCell[][] maze)
+		{
+			this.playerCoord = playerCoord;
+			this.maze = maze;
+		}
+		
+		@Override
+		public void run()
+		{
+			route = pathFinder.findRoute(coord, playerCoord, maze);
+			threadCount--;
 		}
 	}
 }
