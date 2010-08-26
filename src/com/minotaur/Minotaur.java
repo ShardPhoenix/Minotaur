@@ -3,9 +3,11 @@ package com.minotaur;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Debug;
+
 public class Minotaur extends Mover
 {
-	public List<Coord> route;
+	public volatile List<Coord> route;
 	private PathFinder pathFinder;
 	private int threadCount;
 	
@@ -70,7 +72,9 @@ public class Minotaur extends Mover
 		@Override
 		public void run()
 		{
+			//Debug.startMethodTracing("path");
 			route = pathFinder.findRoute(coord, playerCoord, maze);
+			//Debug.stopMethodTracing();
 			threadCount--;
 		}
 	}

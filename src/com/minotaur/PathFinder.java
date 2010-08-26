@@ -36,7 +36,7 @@ public class PathFinder
 	{
 		List<Coord> open = new ArrayList<Coord>();
 		open.add(start);
-		List<Coord> closed = new ArrayList<Coord>();
+		//List<Coord> closed = new ArrayList<Coord>();
 		Map<Coord, Integer> g = new HashMap<Coord, Integer>();
 		g.put(start, 0);
 		Map<Coord, Integer> h = new HashMap<Coord, Integer>();
@@ -45,10 +45,16 @@ public class PathFinder
 		f.put(start, manhattanDist(start, target));
 		Map<Coord, Coord> cameFrom = new HashMap<Coord, Coord>();
 		
-		return aStar(maze, target, open, closed, g, h, f, cameFrom);
+		Map<Coord, Boolean> openMap = new HashMap<Coord, Boolean>();
+		Map<Coord, Boolean> closed = new HashMap<Coord, Boolean>();
+		
+		return aStar(maze, target, open, openMap, closed, g, h, f, cameFrom);
+		
+		
 	}
 	
-	private List<Coord> aStar(MazeCell[][] maze, Coord target, List<Coord> open, List<Coord> closed,
+	private List<Coord> aStar(MazeCell[][] maze, Coord target, List<Coord> open, Map<Coord, Boolean> openMap,
+			Map<Coord, Boolean> closed,
 			Map<Coord, Integer> g, Map<Coord, Integer> h, Map<Coord, Integer> f, Map<Coord, Coord> cameFrom)
 	{
 		while (true)
@@ -63,15 +69,17 @@ public class PathFinder
 				return reconstructPath(cameFrom, current, new ArrayList<Coord>());
 			}
 			open.remove(current);
-			closed.add(current);
+			openMap.put(current, false);
+			closed.put(current, true);
 			int tenativeG = g.get(current) + 1;
-			List<Coord> neighbours = getNeighbours(maze, current, closed, open, tenativeG, g);
+			List<Coord> neighbours = getNeighbours(maze, current, closed, openMap, tenativeG, g);
 			
 			if (!neighbours.isEmpty())
 			{
 				open.addAll(neighbours);
 				for (Coord c : neighbours)
 				{
+					openMap.put(c, true);
 					cameFrom.put(c, current);
 					int newH = manhattanDist(c, target);
 					g.put(c, tenativeG);
@@ -102,7 +110,7 @@ public class PathFinder
 		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
 
-	private List<Coord> getNeighbours(MazeCell[][] maze, Coord current, List<Coord> closed, List<Coord> open,
+	private List<Coord> getNeighbours(MazeCell[][] maze, Coord current, Map<Coord, Boolean> closed, Map<Coord, Boolean> openMap,
 			double tentativeG, Map<Coord, Integer> g)
 	{
 		goodNeighbours.clear();
@@ -116,10 +124,10 @@ public class PathFinder
 		
 		for (Coord c : neighbours)
 		{
-			if (c.isInsideMaze() && !closed.contains(c)
+			if (c.isInsideMaze() && closed.get(c) == null
 					&& !maze[c.col][c.row].isWall)
 			{
-				if (!open.contains(c) || g.get(c) > tentativeG)
+				if (openMap.get(c) == null || !openMap.get(c) || g.get(c) > tentativeG)
 				{
 					goodNeighbours.add(c);
 				}

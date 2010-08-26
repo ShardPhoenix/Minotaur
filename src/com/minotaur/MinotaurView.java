@@ -5,6 +5,7 @@ import java.util.Set;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
