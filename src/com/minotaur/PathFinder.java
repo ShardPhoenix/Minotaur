@@ -13,6 +13,8 @@ public class PathFinder
 {
 	//holds coords so they don't have to be instantiated inside the pathfinding loop
 	private final Coord[][] coords;
+	private List<Coord> goodNeighbours;
+	private Coord[] neighbours;
 	
 	public PathFinder()
 	{
@@ -25,6 +27,9 @@ public class PathFinder
 				coords[col][row] = new Coord(col, row);
 			}
 		}
+		
+		goodNeighbours = new ArrayList<Coord>();
+		neighbours = new Coord[4];
 	}
 	
 	public List<Coord> findRoute(Coord start, Coord target,  MazeCell[][] maze)
@@ -32,11 +37,11 @@ public class PathFinder
 		List<Coord> open = new ArrayList<Coord>();
 		open.add(start);
 		List<Coord> closed = new ArrayList<Coord>();
-		Map<Coord, Double> g = new HashMap<Coord, Double>();
-		g.put(start, 0.0);
-		Map<Coord, Double> h = new HashMap<Coord, Double>();
+		Map<Coord, Integer> g = new HashMap<Coord, Integer>();
+		g.put(start, 0);
+		Map<Coord, Integer> h = new HashMap<Coord, Integer>();
 		h.put(start, manhattanDist(start, target));
-		Map<Coord, Double> f = new HashMap<Coord, Double>();
+		Map<Coord, Integer> f = new HashMap<Coord, Integer>();
 		f.put(start, manhattanDist(start, target));
 		Map<Coord, Coord> cameFrom = new HashMap<Coord, Coord>();
 		
@@ -44,7 +49,7 @@ public class PathFinder
 	}
 	
 	private List<Coord> aStar(MazeCell[][] maze, Coord target, List<Coord> open, List<Coord> closed,
-			Map<Coord, Double> g, Map<Coord, Double> h, Map<Coord, Double> f, Map<Coord, Coord> cameFrom)
+			Map<Coord, Integer> g, Map<Coord, Integer> h, Map<Coord, Integer> f, Map<Coord, Coord> cameFrom)
 	{
 		while (true)
 		{
@@ -59,7 +64,7 @@ public class PathFinder
 			}
 			open.remove(current);
 			closed.add(current);
-			double tenativeG = g.get(current) + 1.0;
+			int tenativeG = g.get(current) + 1;
 			List<Coord> neighbours = getNeighbours(maze, current, closed, open, tenativeG, g);
 			
 			if (!neighbours.isEmpty())
@@ -68,9 +73,10 @@ public class PathFinder
 				for (Coord c : neighbours)
 				{
 					cameFrom.put(c, current);
+					int newH = manhattanDist(c, target);
 					g.put(c, tenativeG);
-					h.put(c, manhattanDist(c, target));
-					f.put(c, g.get(c) + h.get(c));
+					h.put(c, newH);
+					f.put(c, tenativeG + newH);
 				}
 			}
 		}
@@ -91,21 +97,22 @@ public class PathFinder
 		}
 	}
 
-	private Double manhattanDist(Coord c, Coord target)
+	private Integer manhattanDist(Coord c, Coord target)
 	{
-		return Math.abs(1.0 * (c.col - target.col)) + Math.abs(1.0 * (c.row - target.row));
+		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
 
 	private List<Coord> getNeighbours(MazeCell[][] maze, Coord current, List<Coord> closed, List<Coord> open,
-			double tentativeG, Map<Coord, Double> g)
+			double tentativeG, Map<Coord, Integer> g)
 	{
-		List<Coord> goodNeighbours = new ArrayList<Coord>();
+		goodNeighbours.clear();
 		int col = current.col;
 		int row = current.row;
 		
-		//TODO: don't allocate an array here
-		Coord[] neighbours = {coords[col + 1][row], coords[col - 1][row],
-							  coords[col][row + 1], coords[col][row - 1]};		
+		neighbours[0] = coords[col + 1][row];
+		neighbours[1] = coords[col - 1][row];
+		neighbours[2] = coords[col][row + 1];
+		neighbours[3] = coords[col][row - 1];		
 		
 		for (Coord c : neighbours)
 		{
@@ -121,9 +128,9 @@ public class PathFinder
 		return goodNeighbours;
 	}
 
-	private Coord getLowestF(Map<Coord, Double> f, List<Coord> open)
+	private Coord getLowestF(Map<Coord, Integer> f, List<Coord> open)
 	{
-		double lowestF = Double.MAX_VALUE;
+		double lowestF = Integer.MAX_VALUE;
 		Coord lowestFCoord = null;
 		for (Coord c : open)
 		{

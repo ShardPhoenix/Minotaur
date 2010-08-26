@@ -1,7 +1,6 @@
 package com.minotaur;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import android.content.Context;
@@ -144,9 +143,9 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			synchronized (surfaceHolder)
 			{
 				//if (mode == GameMode.STATE_RUNNING)
-				{
-					setState(GameMode.STATE_PAUSE);
-				}
+				//{
+					//setState(GameMode.STATE_PAUSE);
+				//}
 			}
 		}
 

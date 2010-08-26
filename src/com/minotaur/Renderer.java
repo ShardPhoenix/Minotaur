@@ -13,65 +13,44 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 
 public class Renderer
 {
-	private Bitmap backgroundImage;
-	private Paint mazePaint;
-	private Paint playerPaint;
+	private Paint greenPaint;
+	private Paint blackPaint;
+	private Paint bluePaint;
 	private Paint backgroundPaint;
 	private RectF rect;
-	private Drawable testImage;
-	private Paint bombPaint;
-	private Paint treasurePaint;
-	private Paint minotaurPaint;
-	private Paint exitPaint;
 	
-	private Drawable bombImage;
-	private Drawable mazeImage;
-	private Drawable treasureImage;
-	private Drawable playerImage;
-	private Drawable minotaurImage;
-	private Drawable dirtImage;
+	private Bitmap bombImage;
+	private Bitmap mazeImage;
+	private Bitmap treasureImage;
+	private Bitmap playerImage;
+	private Bitmap minotaurImage;
+	private Bitmap dirtImage;
 
 	public Renderer(Context context)
 	{
 		Resources res = context.getResources();
 
-		testImage = context.getResources().getDrawable(R.drawable.icon);
-		backgroundImage = BitmapFactory.decodeResource(res, R.drawable.icon);
+		bombImage = BitmapFactory.decodeResource(res, R.drawable.bomb);
+		mazeImage = BitmapFactory.decodeResource(res, R.drawable.wall);
+		treasureImage = BitmapFactory.decodeResource(res, R.drawable.gold);
+		playerImage = BitmapFactory.decodeResource(res, R.drawable.hero);
+		minotaurImage = BitmapFactory.decodeResource(res, R.drawable.mino);
+		dirtImage = BitmapFactory.decodeResource(res, R.drawable.dirt);
 		
-		bombImage = context.getResources().getDrawable(R.drawable.bomb);
-		mazeImage = context.getResources().getDrawable(R.drawable.wall);
-		treasureImage = context.getResources().getDrawable(R.drawable.gold);
-		playerImage = context.getResources().getDrawable(R.drawable.hero);
-		minotaurImage = context.getResources().getDrawable(R.drawable.mino);
-		dirtImage = context.getResources().getDrawable(R.drawable.dirt);
-
-		mazePaint = new Paint();
-		mazePaint.setAntiAlias(true);
-		mazePaint.setARGB(255, 0, 0, 0);
+		blackPaint = new Paint();
+		blackPaint.setAntiAlias(true);
+		blackPaint.setARGB(255, 0, 0, 0);
 		
-		bombPaint = new Paint();
-		bombPaint.setAntiAlias(true);
-		bombPaint.setARGB(255, 255, 0, 0);
+		greenPaint = new Paint();
+		greenPaint.setAntiAlias(true);
+		greenPaint.setARGB(255, 0, 255, 0);
 		
-		treasurePaint = new Paint();
-		treasurePaint.setAntiAlias(true);
-		treasurePaint.setARGB(255, 255, 255, 0);
-		
-		playerPaint = new Paint();
-		playerPaint.setAntiAlias(true);
-		playerPaint.setARGB(255, 0, 255, 0);
-		
-		minotaurPaint = new Paint();
-		minotaurPaint.setAntiAlias(true);
-		minotaurPaint.setARGB(255, 102, 51, 0);
-		
-		exitPaint = new Paint();
-		exitPaint.setAntiAlias(true);
-		exitPaint.setARGB(255, 0, 0, 255);
+		bluePaint = new Paint();
+		bluePaint.setAntiAlias(true);
+		bluePaint.setARGB(255, 0, 0, 255);
 		
 		backgroundPaint = new Paint();
 		backgroundPaint.setAntiAlias(true);
@@ -101,12 +80,12 @@ public class Renderer
 
 	private void renderLoss(Canvas c, GameModel game)
 	{
-		c.drawText("You died! (space to restart)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+		c.drawText("You died! (space to restart)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), blackPaint);
 	}
 
 	private void renderVictory(Canvas c, GameModel game)
 	{
-		c.drawText("You escaped! (space to continue)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), mazePaint);
+		c.drawText("You escaped! (space to continue)", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), blackPaint);
 	}
 
 	private void renderGameplay(Canvas c, GameModel game)
@@ -138,7 +117,7 @@ public class Renderer
 				}
 				if (game.maze[col][row].isExit)
 				{
-					c.drawRect(rect, exitPaint);
+					c.drawRect(rect, bluePaint);
 				}
 			}
 		}
@@ -158,7 +137,7 @@ public class Renderer
 			int x = colToX(route.get(i).col);
 			int y = rowToY(route.get(i).row);
 			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
-			c.drawRect(rect, playerPaint);
+			c.drawRect(rect, greenPaint);
 		}
 		
 	}
@@ -180,7 +159,7 @@ public class Renderer
 		}
 	}
 	
-	private void renderMoverSmoothly(Canvas c, Mover m, Drawable image)
+	private void renderMoverSmoothly(Canvas c, Mover m, Bitmap image)
 	{
 		long timeSinceMoved = System.currentTimeMillis() - m.lastMoved;
 		double ratio = timeSinceMoved/m.millisPerMove < 1.0 ? timeSinceMoved/m.millisPerMove : 1.0;
@@ -193,10 +172,11 @@ public class Renderer
 		drawSquareImage(c, x, y, MAZE_CELL_WIDTH, image);
 	}
 	
-	private void drawSquareImage(Canvas c, int x, int y, int size, Drawable image)
+	private void drawSquareImage(Canvas c, int x, int y, int size, Bitmap image)
 	{
-		image.setBounds(x, y, x + size, y + size);
-		image.draw(c);
+		c.drawBitmap(image, x, y, null);
+		//image.setBounds(x, y, x + size, y + size);
+		//image.draw(c);
 	}
 	
 	private int colToX(int col)
