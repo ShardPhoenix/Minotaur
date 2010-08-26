@@ -13,8 +13,8 @@ public class PathFinder
 {
 	//holds coords so they don't have to be instantiated inside the pathfinding loop
 	private final Coord[][] coords;
-	private List<Coord> goodNeighbours;
-	private Coord[] neighbours;
+	private final List<Coord> goodNeighbours;
+	private final Coord[] neighbours;
 	
 	public PathFinder()
 	{
@@ -49,13 +49,11 @@ public class PathFinder
 		Map<Coord, Boolean> closed = new HashMap<Coord, Boolean>();
 		
 		return aStar(maze, target, open, openMap, closed, g, h, f, cameFrom);
-		
-		
 	}
 	
 	private List<Coord> aStar(MazeCell[][] maze, Coord target, List<Coord> open, Map<Coord, Boolean> openMap,
-			Map<Coord, Boolean> closed,
-			Map<Coord, Integer> g, Map<Coord, Integer> h, Map<Coord, Integer> f, Map<Coord, Coord> cameFrom)
+			Map<Coord, Boolean> closed, Map<Coord, Integer> g, 
+			Map<Coord, Integer> h, Map<Coord, Integer> f, Map<Coord, Coord> cameFrom)
 	{
 		while (true)
 		{

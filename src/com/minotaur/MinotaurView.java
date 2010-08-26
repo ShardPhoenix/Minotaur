@@ -66,9 +66,11 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			while (run)
 			{
+				
 				Canvas c = null;
 				try
 				{
+					//Debug.startMethodTracing("path");
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder)
 					{
@@ -90,6 +92,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 							mode = GameMode.STATE_RUNNING;
 						}
 					}
+					//Debug.stopMethodTracing();
 				}
 				finally
 				{

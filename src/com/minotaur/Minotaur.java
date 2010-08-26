@@ -3,8 +3,6 @@ package com.minotaur;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.Debug;
-
 public class Minotaur extends Mover
 {
 	public volatile List<Coord> route;
@@ -34,7 +32,6 @@ public class Minotaur extends Mover
 	
 	public void update(Coord playerCoord, MazeCell[][] maze)
 	{
-		move();
 		//if (System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
 			//route = pathFinder.findRoute(coord, playerCoord, maze);
@@ -45,6 +42,7 @@ public class Minotaur extends Mover
 				pathThread.start();
 			}
 		}
+		move();
 	}
 	
 	private void move()
@@ -72,9 +70,7 @@ public class Minotaur extends Mover
 		@Override
 		public void run()
 		{
-			//Debug.startMethodTracing("path");
 			route = pathFinder.findRoute(coord, playerCoord, maze);
-			//Debug.stopMethodTracing();
 			threadCount--;
 		}
 	}
