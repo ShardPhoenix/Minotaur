@@ -82,8 +82,6 @@ public class Renderer
 
 	public void render(Canvas c, GameMode mode, GameModel game)
 	{
-		//c.drawBitmap(backgroundImage, 0, 0, null);
-		
 		rect.set(0, 0, 500, 500);
 		c.drawRect(rect, backgroundPaint);
 		
@@ -113,9 +111,6 @@ public class Renderer
 
 	private void renderGameplay(Canvas c, GameModel game)
 	{
-		//testImage.setBounds(30, 30, 30, 30);
-		//testImage.draw(c);
-
 		for (int col = 0; col < MAZE_COLS; col++)
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
@@ -158,10 +153,10 @@ public class Renderer
 
 	private void debugRenderPath(Canvas c, MazeCell[][] maze, List<Coord> route)
 	{
-		for (Coord coord : route)
+		for (int i = 1; i < route.size() - 1; i++)
 		{
-			int x = colToX(coord.col);
-			int y = rowToY(coord.row);
+			int x = colToX(route.get(i).col);
+			int y = rowToY(route.get(i).row);
 			rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
 			c.drawRect(rect, playerPaint);
 		}
