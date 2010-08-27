@@ -4,7 +4,9 @@ import static com.minotaur.Constants.MAZE_COLS;
 import static com.minotaur.Constants.MAZE_ROWS;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class PathFinder
 {
@@ -55,7 +57,14 @@ public class PathFinder
 	
 	public List<Coord> findRoute(Coord start, Coord target,  MazeCell[][] maze)
 	{
-		List<Node> open = new ArrayList<Node>();
+		Comparator<Node> fComparator = new Comparator<Node>() {
+			public int compare(Node a, Node b)
+			{
+				return a.f - b.f;
+			}
+		};
+		
+		PriorityQueue<Node> open = new PriorityQueue<Node>(11, fComparator);
 		open.add(nodes[start.col][start.row]);
 		
 		//reset nodes
@@ -76,7 +85,7 @@ public class PathFinder
 		return aStar(target, open);
 	}
 	
-	private List<Coord> aStar(Coord target, List<Node> open)
+	private List<Coord> aStar(Coord target, PriorityQueue<Node> open)
 	{
 		while (true)
 		{
@@ -84,27 +93,27 @@ public class PathFinder
 			{
 				return null;
 			}
-			Node current = getLowestF(open);
+			Node current = open.poll(); //node with lowest f
 			if (current.coord.equals(target))
 			{
 				return reconstructPath(current, new ArrayList<Node>());
 			}
-			open.remove(current);
+
 			current.closed = true;
 			current.open = false;
-			int tenativeG = current.g + 1;
-			List<Node> neighbours = getNeighbours(current, tenativeG);
+			int tentativeG = current.g + 1;
+			List<Node> neighbours = getNeighbours(current, tentativeG);
 			
 			if (!neighbours.isEmpty())
 			{
 				for (Node n : neighbours)
 				{
-					open.add(n);
+					open.offer(n);
 					n.open = true;
 					n.cameFrom = current;
 					int newH = manhattanDist(n.coord, target);
-					n.g = tenativeG;
-					n.f = tenativeG + newH;
+					n.g = tentativeG;
+					n.f = tentativeG + newH;
 				}
 			}
 		}
@@ -154,20 +163,5 @@ public class PathFinder
 			}
 		}
 		return goodNeighbours;
-	}
-
-	private Node getLowestF(List<Node> open)
-	{
-		double lowestF = Integer.MAX_VALUE;
-		Node lowestFNode = null;
-		for (Node n : open)
-		{
-			if (n.f < lowestF)
-			{
-				lowestFNode = n;
-				lowestF = n.f;
-			}
-		}
-		return lowestFNode;
 	}
 }
