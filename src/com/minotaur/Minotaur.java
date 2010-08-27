@@ -32,7 +32,7 @@ public class Minotaur extends Mover
 	
 	public void update(Coord playerCoord, MazeCell[][] maze)
 	{
-		//if (System.currentTimeMillis() - lastMoved > millisPerMove)
+		if (System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
 			//route = pathFinder.findRoute(coord, playerCoord, maze);
 			if (threadCount == 0)
