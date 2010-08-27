@@ -4,38 +4,30 @@ import static com.minotaur.Constants.MAZE_COLS;
 import static com.minotaur.Constants.MAZE_ROWS;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PathFinder
 {
 	//holds coords so they don't have to be instantiated inside the pathfinding loop
-	private final Coord[][] coords;
-	private final List<Coord> goodNeighbours;
-	private final Coord[] neighbours;
+	private final List<Node> goodNeighbours;
+	private final Node[] neighbours;
 	
 	private final Node[][] nodes;
 	
 	public PathFinder()
 	{
-		coords = new Coord[MAZE_COLS][MAZE_ROWS];
 		nodes = new Node[MAZE_COLS][MAZE_ROWS];
 		
 		for (int col = 0; col < MAZE_COLS; col++)
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
-				coords[col][row] = new Coord(col, row);
-				nodes[col][row] = new Node(coords[col][row], 0, 0, 0, false, false, false);
+				nodes[col][row] = new Node(new Coord(col, row), 0, 0, false, false, false, null);
 			}
 		}
 		
-		goodNeighbours = new ArrayList<Coord>();
-		neighbours = new Coord[4];
-		
-		
+		goodNeighbours = new ArrayList<Node>();
+		neighbours = new Node[4];
 	}
 	
 	private class Node
@@ -43,29 +35,28 @@ public class PathFinder
 		public Coord coord;
 		public int f;
 		public int g;
-		public int h;
 		public boolean isPassable;
 		public boolean open;
 		public boolean closed;
+		public Node cameFrom;
 		
-		public Node(Coord coord, int f, int g, int h, boolean isPassable, boolean open, boolean closed)
+		public Node(Coord coord, int f, int g, boolean isPassable, boolean open, boolean closed, Node cameFrom)
 		{
 			super();
 			this.coord = coord;
 			this.f = f;
 			this.g = g;
-			this.h = h;
 			this.isPassable = isPassable;
 			this.open = open;
 			this.closed = closed;
+			this.cameFrom = cameFrom;
 		}
 	}
 	
 	public List<Coord> findRoute(Coord start, Coord target,  MazeCell[][] maze)
 	{
-		List<Coord> open = new ArrayList<Coord>();
-		open.add(start);
-		Map<Coord, Coord> cameFrom = new HashMap<Coord, Coord>();
+		List<Node> open = new ArrayList<Node>();
+		open.add(nodes[start.col][start.row]);
 		
 		//reset nodes
 		for (int col = 0; col < MAZE_COLS; col++)
@@ -75,17 +66,17 @@ public class PathFinder
 				Node n = nodes[col][row];
 				n.f = 0;
 				n.g = 0;
-				n.h = 0;
 				n.isPassable = !maze[col][row].isWall;
 				n.open = false;
 				n.closed = false;
+				n.cameFrom = null;
 			}
 		}
 		
-		return aStar(maze, target, open, cameFrom);
+		return aStar(target, open);
 	}
 	
-	private List<Coord> aStar(MazeCell[][] maze, Coord target, List<Coord> open, Map<Coord, Coord> cameFrom)
+	private List<Coord> aStar(Coord target, List<Node> open)
 	{
 		while (true)
 		{
@@ -93,48 +84,47 @@ public class PathFinder
 			{
 				return null;
 			}
-			Coord current = getLowestF(open);
-			if (current.equals(target))
+			Node current = getLowestF(open);
+			if (current.coord.equals(target))
 			{
-				return reconstructPath(cameFrom, current, new ArrayList<Coord>());
+				return reconstructPath(current, new ArrayList<Node>());
 			}
 			open.remove(current);
-			Node currentNode = nodes[current.col][current.row];
-			currentNode.closed = true;
-			currentNode.open = false;
-			
-			int tenativeG = currentNode.g + 1;
-			List<Coord> neighbours = getNeighbours(maze, current, tenativeG);
+			current.closed = true;
+			current.open = false;
+			int tenativeG = current.g + 1;
+			List<Node> neighbours = getNeighbours(current, tenativeG);
 			
 			if (!neighbours.isEmpty())
 			{
-				open.addAll(neighbours);
-				for (Coord c : neighbours)
+				for (Node n : neighbours)
 				{
-					Node n = nodes[c.col][c.row];
+					open.add(n);
 					n.open = true;
-					cameFrom.put(c, current);
-					int newH = manhattanDist(c, target);
+					n.cameFrom = current;
+					int newH = manhattanDist(n.coord, target);
 					n.g = tenativeG;
-					n.h = newH;
 					n.f = tenativeG + newH;
 				}
 			}
 		}
 	}
 
-	private List<Coord> reconstructPath(Map<Coord, Coord> cameFrom, Coord current, List<Coord> path)
+	private List<Coord> reconstructPath(Node current, List<Node> path)
 	{
-		if (cameFrom.get(current) != null)
+		path.add(current);
+		if (current.cameFrom != null)
 		{
-			path.add(current);
-			return reconstructPath(cameFrom, cameFrom.get(current), path);
+			return reconstructPath(current.cameFrom, path);
 		}
 		else
 		{
-			path.add(current);
-			Collections.reverse(path);
-			return path;
+			List<Coord> route = new ArrayList<Coord>();
+			for (int i = path.size() - 1; i >= 0; i--) //build the list of coords in reverse
+			{
+				route.add(path.get(i).coord);
+			}
+			return route;
 		}
 	}
 
@@ -143,43 +133,43 @@ public class PathFinder
 		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
 
-	private List<Coord> getNeighbours(MazeCell[][] maze, Coord current, double tentativeG)
+	private List<Node> getNeighbours(Node current, double tentativeG)
 	{
 		goodNeighbours.clear();
-		int col = current.col;
-		int row = current.row;
+		int col = current.coord.col;
+		int row = current.coord.row;
 		
-		neighbours[0] = coords[col + 1][row];
-		neighbours[1] = coords[col - 1][row];
-		neighbours[2] = coords[col][row + 1];
-		neighbours[3] = coords[col][row - 1];		
+		neighbours[0] = nodes[col + 1][row];
+		neighbours[1] = nodes[col - 1][row];
+		neighbours[2] = nodes[col][row + 1];
+		neighbours[3] = nodes[col][row - 1];		
 		
-		for (Coord c : neighbours)
+		for (int i = 0; i < neighbours.length; i++)
 		{
-			Node n = nodes[c.col][c.row];
-			if (c.isInsideMaze() && !n.closed && n.isPassable)
+			Node n = neighbours[i];
+			if (!n.closed && n.isPassable && n.coord.isInsideMaze())
 			{
 				if (!n.open || n.g > tentativeG)
 				{
-					goodNeighbours.add(c);
+					goodNeighbours.add(n);
 				}
 			}
 		}
 		return goodNeighbours;
 	}
 
-	private Coord getLowestF(List<Coord> open)
+	private Node getLowestF(List<Node> open)
 	{
 		double lowestF = Integer.MAX_VALUE;
-		Coord lowestFCoord = null;
-		for (Coord c : open)
+		Node lowestFNode = null;
+		for (Node n : open)
 		{
-			if (nodes[c.col][c.row].f < lowestF)
+			if (n.f < lowestF)
 			{
-				lowestFCoord = nodes[c.col][c.row].coord;
-				lowestF = nodes[c.col][c.row].f;
+				lowestFNode = n;
+				lowestF = n.f;
 			}
 		}
-		return lowestFCoord;
+		return lowestFNode;
 	}
 }
