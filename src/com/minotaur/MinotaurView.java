@@ -66,7 +66,6 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			while (run)
 			{
-				
 				Canvas c = null;
 				try
 				{
