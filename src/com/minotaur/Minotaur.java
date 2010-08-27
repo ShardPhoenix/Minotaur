@@ -34,13 +34,15 @@ public class Minotaur extends Mover
 	{
 		if (System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
-			//route = pathFinder.findRoute(coord, playerCoord, maze);
+			route = pathFinder.findRoute(coord, playerCoord, maze);
+			/*
 			if (threadCount == 0)
 			{
 				threadCount++;
 				Thread pathThread = new PathThread(playerCoord, maze);
 				pathThread.start();
 			}
+			*/
 		}
 		move();
 	}

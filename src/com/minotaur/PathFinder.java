@@ -74,7 +74,7 @@ public class PathFinder
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
 				Node n = nodes[col][row];
-				n.f = 0;
+				n.f = manhattanDist(n.coord, target);
 				n.g = 0;
 				n.isPassable = !maze[col][row].isWall;
 				n.isOpen = false;
