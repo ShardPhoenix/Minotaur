@@ -112,20 +112,18 @@ public class PathFinder
 
 	private List<Coord> reconstructPath(Node current, List<Node> path)
 	{
+		while (current.cameFrom != null)
+		{
+			path.add(current);
+			current = current.cameFrom;
+		}
 		path.add(current);
-		if (current.cameFrom != null)
+		List<Coord> route = new ArrayList<Coord>();
+		for (int i = path.size() - 1; i >= 0; i--) //build the list of coords in reverse
 		{
-			return reconstructPath(current.cameFrom, path);
+			route.add(path.get(i).coord);
 		}
-		else
-		{
-			List<Coord> route = new ArrayList<Coord>();
-			for (int i = path.size() - 1; i >= 0; i--) //build the list of coords in reverse
-			{
-				route.add(path.get(i).coord);
-			}
-			return route;
-		}
+		return route;
 	}
 
 	private Integer manhattanDist(Coord c, Coord target)
