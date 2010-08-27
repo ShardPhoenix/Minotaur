@@ -94,8 +94,11 @@ public class Renderer
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
-				int x = game.maze[col][row].x;
-				int y = game.maze[col][row].y;
+				//int x = game.maze[col][row].x;
+				//int y = game.maze[col][row].y;
+				int x = colToX(col);
+				int y = rowToY(row);
+
 				rect.set(x, y, x + MAZE_CELL_WIDTH, y + MAZE_CELL_WIDTH);
 				
 				if (game.maze[col][row].isWall)
@@ -119,6 +122,7 @@ public class Renderer
 				{
 					c.drawRect(rect, bluePaint);
 				}
+				
 			}
 		}
 		
@@ -146,15 +150,15 @@ public class Renderer
 	{
 		for (int i = 0; i < game.player.bombsLeft; i++)
 		{
-			int x = colToX(Constants.MAZE_COLS);
-			int y = rowToY(Constants.MAZE_ROWS - 1 - i);
+			int x = colToX(i);
+			int y = rowToY(MAZE_ROWS);
 			drawSquareImage(c, x, y, MAZE_CELL_WIDTH, bombImage);
 		}
 		
 		for (int i = 0; i < game.treasuresGained; i++)
 		{
-			int x = colToX(Constants.MAZE_COLS);
-			int y = rowToY(i);
+			int x = colToX(MAZE_COLS - 2 - i);
+			int y = rowToY(MAZE_ROWS);
 			drawSquareImage(c, x, y, MAZE_CELL_WIDTH, treasureImage);
 		}
 	}
@@ -186,7 +190,7 @@ public class Renderer
 	
 	private int rowToY(int row)
 	{
-		return Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN;
+		return Constants.MAZE_CELL_WIDTH * (row - 1) + Constants.MAZE_TOP_MARGIN;
 	}
 	
 	private int colToX(double col)
@@ -196,6 +200,6 @@ public class Renderer
 	
 	private int rowToY(double row)
 	{
-		return (int) Math.round(Constants.MAZE_CELL_WIDTH * row + Constants.MAZE_TOP_MARGIN);
+		return (int) Math.round(Constants.MAZE_CELL_WIDTH * (row - 1) + Constants.MAZE_TOP_MARGIN);
 	}
 }

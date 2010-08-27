@@ -5,7 +5,7 @@ public class Constants
 	public static final int MAZE_CELL_WIDTH = 16; //pixels
 	
 	//must be odd numbers
-	public static final int MAZE_COLS = 19;
+	public static final int MAZE_COLS = 21;
 	public static final int MAZE_ROWS = 27;
 	
 	public static final int MAZE_TOP_MARGIN = 0;
