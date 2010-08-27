@@ -87,18 +87,13 @@ public class PathFinder
 	
 	private List<Coord> aStar(Coord target, PriorityQueue<Node> open)
 	{
-		while (true)
-		{
-			if (open.isEmpty())
-			{
-				return null;
-			}
+		while (!open.isEmpty())
+		{	
 			Node current = open.poll(); //node with lowest f
 			if (current.coord.equals(target))
 			{
 				return reconstructPath(current, new ArrayList<Node>());
 			}
-
 			current.closed = true;
 			current.open = false;
 			int tentativeG = current.g + 1;
@@ -117,6 +112,8 @@ public class PathFinder
 				}
 			}
 		}
+		
+		return null; //no path found
 	}
 
 	private List<Coord> reconstructPath(Node current, List<Node> path)
@@ -140,7 +137,7 @@ public class PathFinder
 		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
 
-	private List<Node> getNeighbours(Node current, double tentativeG)
+	private List<Node> getNeighbours(Node current, int tentativeG)
 	{
 		goodNeighbours.clear();
 		int col = current.coord.col;
@@ -154,7 +151,7 @@ public class PathFinder
 		for (int i = 0; i < neighbours.length; i++)
 		{
 			Node n = neighbours[i];
-			if (!n.closed && n.isPassable && n.coord.isInsideMaze())
+			if (n.isPassable && !n.closed  && n.coord.isInsideMaze())
 			{
 				if (!n.open || n.g > tentativeG)
 				{
