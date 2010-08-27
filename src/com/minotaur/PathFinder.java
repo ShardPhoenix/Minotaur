@@ -11,7 +11,6 @@ import java.util.PriorityQueue;
 public class PathFinder
 {
 	//holds coords so they don't have to be instantiated inside the pathfinding loop
-	private final List<Node> goodNeighbours;
 	private final Node[] neighbours;
 	
 	private final Node[][] nodes;
@@ -24,11 +23,10 @@ public class PathFinder
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
-				nodes[col][row] = new Node(new Coord(col, row), 0, 0, false, false, false, null);
+				nodes[col][row] = new Node(new Coord(col, row), 0, 0, false, false, false, false, null);
 			}
 		}
 		
-		goodNeighbours = new ArrayList<Node>();
 		neighbours = new Node[4];
 	}
 	
@@ -38,19 +36,22 @@ public class PathFinder
 		public int f;
 		public int g;
 		public boolean isPassable;
-		public boolean open;
-		public boolean closed;
+		public boolean isOpen;
+		public boolean isClosed;
+		public boolean isGoodNeighbour;
 		public Node cameFrom;
 		
-		public Node(Coord coord, int f, int g, boolean isPassable, boolean open, boolean closed, Node cameFrom)
+		public Node(Coord coord, int f, int g, boolean isPassable, boolean open, 
+				boolean closed, boolean goodNeighbour, Node cameFrom)
 		{
 			super();
 			this.coord = coord;
 			this.f = f;
 			this.g = g;
 			this.isPassable = isPassable;
-			this.open = open;
-			this.closed = closed;
+			this.isOpen = open;
+			this.isClosed = closed;
+			this.isGoodNeighbour = goodNeighbour;
 			this.cameFrom = cameFrom;
 		}
 	}
@@ -76,8 +77,8 @@ public class PathFinder
 				n.f = 0;
 				n.g = 0;
 				n.isPassable = !maze[col][row].isWall;
-				n.open = false;
-				n.closed = false;
+				n.isOpen = false;
+				n.isClosed = false;
 				n.cameFrom = null;
 			}
 		}
@@ -94,17 +95,18 @@ public class PathFinder
 			{
 				return reconstructPath(current, new ArrayList<Node>());
 			}
-			current.closed = true;
-			current.open = false;
+			current.isClosed = true;
+			current.isOpen = false;
 			int tentativeG = current.g + 1;
-			List<Node> neighbours = getNeighbours(current, tentativeG);
+			checkNeighbours(current, tentativeG);
 			
-			if (!neighbours.isEmpty())
+			for (int i = 0; i < neighbours.length; i++)
 			{
-				for (Node n : neighbours)
+				Node n = neighbours[i];
+				if (n.isGoodNeighbour)
 				{
 					open.offer(n);
-					n.open = true;
+					n.isOpen = true;
 					n.cameFrom = current;
 					int newH = manhattanDist(n.coord, target);
 					n.g = tentativeG;
@@ -112,7 +114,6 @@ public class PathFinder
 				}
 			}
 		}
-		
 		return null; //no path found
 	}
 
@@ -137,9 +138,8 @@ public class PathFinder
 		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
 
-	private List<Node> getNeighbours(Node current, int tentativeG)
+	private void checkNeighbours(Node current, int tentativeG)
 	{
-		goodNeighbours.clear();
 		int col = current.coord.col;
 		int row = current.coord.row;
 		
@@ -151,14 +151,14 @@ public class PathFinder
 		for (int i = 0; i < neighbours.length; i++)
 		{
 			Node n = neighbours[i];
-			if (n.isPassable && !n.closed  && n.coord.isInsideMaze())
+			n.isGoodNeighbour = false;
+			if (n.isPassable && !n.isClosed  && n.coord.isInsideMaze())
 			{
-				if (!n.open || n.g > tentativeG)
+				if (!n.isOpen || n.g > tentativeG)
 				{
-					goodNeighbours.add(n);
+					n.isGoodNeighbour = true;
 				}
 			}
 		}
-		return goodNeighbours;
 	}
 }
