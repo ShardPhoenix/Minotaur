@@ -42,6 +42,7 @@ public class Renderer
 		
 		blackPaint = new Paint();
 		blackPaint.setAntiAlias(true);
+		blackPaint.setTextAlign(Paint.Align.CENTER);
 		blackPaint.setARGB(255, 0, 0, 0);
 		
 		greenPaint = new Paint();
