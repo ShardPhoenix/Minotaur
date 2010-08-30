@@ -158,8 +158,7 @@ public class PathFinder
 		{
 			Node n = neighbours[i];
 			n.isGoodNeighbour = false;
-			if (n.isPassable && !n.isClosed && n.coord.isInsideMaze()
-					&& (!n.isOpen || n.g > tentativeG))
+			if (n.isPassable && !n.isClosed && (!n.isOpen || n.g > tentativeG))
 			{
 				n.isGoodNeighbour = true;
 			}
