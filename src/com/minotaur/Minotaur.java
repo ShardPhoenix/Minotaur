@@ -34,6 +34,7 @@ public class Minotaur extends Mover
 	{
 		if (System.currentTimeMillis() - lastMoved > millisPerMove)
 		{
+			move();
 			route = pathFinder.findRoute(coord, playerCoord, maze);
 			/*
 			if (threadCount == 0)
@@ -44,13 +45,11 @@ public class Minotaur extends Mover
 			}
 			*/
 		}
-		move();
 	}
 	
 	private void move()
 	{
-		if (System.currentTimeMillis() - lastMoved > millisPerMove
-				&& route != null && route.size() > 1)
+		if (route != null && route.size() > 1)
 		{
 			lastCoord = coord;
 			coord = route.get(1);

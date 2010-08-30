@@ -82,6 +82,8 @@ public class PathFinder
 				n.cameFrom = null;
 			}
 		}
+		nodes[start.col][start.row].isOpen = true;
+		
 		
 		return aStar(target, open);
 	}
@@ -105,12 +107,16 @@ public class PathFinder
 				Node n = neighbours[i];
 				if (n.isGoodNeighbour)
 				{
-					open.offer(n);
-					n.isOpen = true;
 					n.cameFrom = current;
 					int newH = manhattanDist(n.coord, target);
 					n.g = tentativeG;
 					n.f = tentativeG + newH;
+					
+					if (!n.isOpen)
+					{
+						open.offer(n);
+						n.isOpen = true;
+					}
 				}
 			}
 		}
@@ -152,7 +158,7 @@ public class PathFinder
 		{
 			Node n = neighbours[i];
 			n.isGoodNeighbour = false;
-			if (n.isPassable && !n.isClosed  && n.coord.isInsideMaze()
+			if (n.isPassable && !n.isClosed && n.coord.isInsideMaze()
 					&& (!n.isOpen || n.g > tentativeG))
 			{
 				n.isGoodNeighbour = true;
