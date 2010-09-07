@@ -5,6 +5,7 @@ import java.util.Set;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -65,10 +66,11 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			while (run)
 			{
+				//Debug.startMethodTracing("path");
 				Canvas c = null;
 				try
 				{
-					//Debug.startMethodTracing("path");
+	
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder)
 					{
@@ -90,7 +92,6 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 							mode = GameMode.STATE_RUNNING;
 						}
 					}
-					//Debug.stopMethodTracing();
 				}
 				finally
 				{
@@ -102,6 +103,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 						surfaceHolder.unlockCanvasAndPost(c);
 					}
 				}
+				//Debug.stopMethodTracing();
 			}
 		}
 
@@ -144,10 +146,10 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		{
 			synchronized (surfaceHolder)
 			{
-				//if (mode == GameMode.STATE_RUNNING)
-				//{
-					//setState(GameMode.STATE_PAUSE);
-				//}
+				if (mode == GameMode.STATE_RUNNING)
+				{
+					setState(GameMode.STATE_PAUSE);
+				}
 			}
 		}
 
@@ -175,11 +177,6 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			{
 				canvasWidth = width;
 				canvasHeight = height;
-
-				// don't forget to resize the background image
-				// TODO: need to pass the size in instead or something
-				// backgroundImage = Bitmap.createScaledBitmap(backgroundImage,
-				// width, height, true);
 			}
 		}
 
@@ -213,6 +210,7 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		});
 
 		setFocusable(true); // make sure we get key events
+		setFocusableInTouchMode(true);
 	}
 
 	public MinotaurThread getThread()
@@ -220,29 +218,18 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 		return thread;
 	}
 
-	/**
-	 * Standard override to get key-press events.
-	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent msg)
 	{
 		return thread.doKeyDown(keyCode, msg);
 	}
 
-	/**
-	 * Standard override for key-up. We actually care about these, so we can
-	 * turn off the engine or stop rotating.
-	 */
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent msg)
 	{
 		return thread.doKeyUp(keyCode, msg);
 	}
 
-	/**
-	 * Standard window-focus override. Notice focus lost so we can pause on
-	 * focus lost. e.g. user switches to take a call.
-	 */
 	@Override
 	public void onWindowFocusChanged(boolean hasWindowFocus)
 	{
@@ -250,9 +237,6 @@ public class MinotaurView extends SurfaceView implements SurfaceHolder.Callback
 			thread.pause();
 	}
 
-	/**
-	 * Installs a pointer to the text view used for messages.
-	 */
 	public void setTextView(TextView textView)
 	{
 		statusText = textView;

@@ -47,6 +47,7 @@ public class Renderer
 		
 		greenPaint = new Paint();
 		greenPaint.setAntiAlias(true);
+		greenPaint.setTextAlign(Paint.Align.CENTER);
 		greenPaint.setARGB(255, 0, 255, 0);
 		
 		bluePaint = new Paint();
@@ -76,7 +77,16 @@ public class Renderer
 			case STATE_LOSE:
 				renderLoss(c, game);
 				break;
+			case STATE_PAUSE:
+				renderPaused(c, game);
+				break;
 		}
+	}
+
+	private void renderPaused(Canvas c, GameModel game)
+	{
+		Paint paintToUse = (System.currentTimeMillis() / 1000) % 2 == 0 ? blackPaint : greenPaint;
+		c.drawText("Game Paused", colToX(MAZE_COLS/2), rowToY(MAZE_ROWS/2), paintToUse);
 	}
 
 	private void renderLoss(Canvas c, GameModel game)
