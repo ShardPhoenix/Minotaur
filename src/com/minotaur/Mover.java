@@ -2,7 +2,6 @@ package com.minotaur;
 
 public class Mover
 {
-
 	public Coord coord;
 	public long lastMoved;
 	public Coord lastCoord;
@@ -10,7 +9,7 @@ public class Mover
 
 	public Mover()
 	{
-		super();
+		
 	}
 
 }

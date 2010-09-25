@@ -22,11 +22,11 @@ public class Player extends Mover
 		
 		bombWalls(input, maze);
 		
-		if (coord.equals(minotaur.coord))
+		if (coord == minotaur.coord)
 		{
 			isDead = true;
 		}
-		else if (coord.equals(maze[Constants.MAZE_COLS - 2][Constants.MAZE_ROWS - 2].coord))
+		else if (coord == Coord.EXIT)
 		{
 			escaped = true;
 		}
@@ -34,7 +34,7 @@ public class Player extends Mover
 	
 	public void nextLevel()
 	{
-		Coord c = new Coord(1, 1);
+		Coord c = Coord.PLAYER_START;
 		coord = c;
 		lastCoord = c;
 		isDead = false;
@@ -48,10 +48,10 @@ public class Player extends Mover
 		{
 			int col = coord.col;
 			int row = coord.row;
-			Coord[] neighbours = {new Coord(col + 1, row), new Coord(col - 1, row),
-									new Coord(col, row + 1), new Coord(col, row - 1),
-									new Coord(col + 1, row - 1), new Coord(col - 1, row + 1),
-									new Coord(col + 1, row + 1), new Coord(col - 1, row - 1)};
+			Coord[] neighbours = {Coord.getCoord(col + 1, row), Coord.getCoord(col - 1, row),
+								  Coord.getCoord(col, row + 1), Coord.getCoord(col, row - 1),
+								  Coord.getCoord(col + 1, row - 1), Coord.getCoord(col - 1, row + 1),
+								  Coord.getCoord(col + 1, row + 1), Coord.getCoord(col - 1, row - 1)};
 			
 			for (Coord coord : neighbours)
 			{
@@ -69,7 +69,7 @@ public class Player extends Mover
 
 	private Coord tryMove(Input input, MazeCell[][] maze)
 	{
-		Coord newCoord = new Coord(coord.col + input.deltaCol, coord.row + input.deltaRow);
+		Coord newCoord = Coord.getCoord(coord.col + input.deltaCol, coord.row + input.deltaRow);
 		
 		if (newCoord.isInsideMaze() && !maze[newCoord.col][newCoord.row].isWall
 				&& System.currentTimeMillis() - lastMoved > millisPerMove)

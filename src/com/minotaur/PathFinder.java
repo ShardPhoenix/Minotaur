@@ -5,14 +5,13 @@ import static com.minotaur.Constants.MAZE_ROWS;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class PathFinder
 {
-	//holds coords so they don't have to be instantiated inside the pathfinding loop
 	private final Node[] neighbours;
-	
 	private final Node[][] nodes;
 	
 	public PathFinder()
@@ -23,7 +22,7 @@ public class PathFinder
 		{
 			for (int row = 0; row < MAZE_ROWS; row++)
 			{
-				nodes[col][row] = new Node(new Coord(col, row), 0, 0, false, false, false, false, null);
+				nodes[col][row] = new Node(Coord.getCoord(col, row), 0, 0, false, false, false, false, null);
 			}
 		}
 		
@@ -44,7 +43,6 @@ public class PathFinder
 		public Node(Coord coord, int f, int g, boolean isPassable, boolean open, 
 				boolean closed, boolean goodNeighbour, Node cameFrom)
 		{
-			super();
 			this.coord = coord;
 			this.f = f;
 			this.g = g;
@@ -93,7 +91,7 @@ public class PathFinder
 		while (!open.isEmpty())
 		{	
 			Node current = open.poll(); //node with lowest f
-			if (current.coord.equals(target))
+			if (current.coord == target)
 			{
 				return reconstructPath(current, new ArrayList<Node>());
 			}
@@ -125,21 +123,16 @@ public class PathFinder
 
 	private List<Coord> reconstructPath(Node current, List<Node> path)
 	{
+		LinkedList<Coord> route = new LinkedList<Coord>();
 		while (current.cameFrom != null)
 		{
-			path.add(current);
+			route.addFirst(current.coord);
 			current = current.cameFrom;
-		}
-		path.add(current);
-		List<Coord> route = new ArrayList<Coord>();
-		for (int i = path.size() - 1; i >= 0; i--) //build the list of coords in reverse
-		{
-			route.add(path.get(i).coord);
 		}
 		return route;
 	}
 
-	private Integer manhattanDist(Coord c, Coord target)
+	private int manhattanDist(Coord c, Coord target)
 	{
 		return Math.abs(c.col - target.col) + Math.abs(c.row - target.row);
 	}
@@ -157,11 +150,7 @@ public class PathFinder
 		for (int i = 0; i < neighbours.length; i++)
 		{
 			Node n = neighbours[i];
-			n.isGoodNeighbour = false;
-			if (n.isPassable && !n.isClosed && (!n.isOpen || n.g > tentativeG))
-			{
-				n.isGoodNeighbour = true;
-			}
+			n.isGoodNeighbour = n.isPassable && !n.isClosed && (!n.isOpen || n.g > tentativeG);
 		}
 	}
 }

@@ -6,16 +6,13 @@ import android.view.KeyEvent;
 
 public class Input
 {
-	public int deltaCol;
-	public int deltaRow;
-	public boolean bombPressed;
+	public final int deltaCol;
+	public final int deltaRow;
+	public final boolean bombPressed;
 	
 	public Input(Set<Integer> keysHeld)
 	{
-		if (keysHeld.contains(KeyEvent.KEYCODE_SPACE))
-		{
-			bombPressed = true;
-		}
+		bombPressed = keysHeld.contains(KeyEvent.KEYCODE_SPACE);
 		int left = keysHeld.contains(KeyEvent.KEYCODE_DPAD_LEFT) ? -1 : 0;
 		int right = keysHeld.contains(KeyEvent.KEYCODE_DPAD_RIGHT) ? 1 : 0;
 		int up = keysHeld.contains(KeyEvent.KEYCODE_DPAD_UP) ? -1 : 0;

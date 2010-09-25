@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class GameModel
 {
-	public Minotaur minotaur;
-	public Player player;
+	public final Minotaur minotaur;
+	public final Player player;
 
 	public MazeCell[][] maze;
 
@@ -29,7 +29,7 @@ public class GameModel
 		maze = generateMaze();
 		
 		minotaur = new Minotaur(getMinotaurStart());
-		player = new Player(new Coord(1, 1));
+		player = new Player(Coord.PLAYER_START);
 
 		startTime = System.currentTimeMillis();
 		
@@ -72,7 +72,7 @@ public class GameModel
 		
 		treasuresGained = 0;
 		
-		levelNum++;;
+		levelNum++;
 	}
 
 	private void updatePickups()
@@ -93,24 +93,20 @@ public class GameModel
 
 	private MazeCell[][] generateMaze()
 	{
-		MazeCell[][] initialMaze = new MazeCell[Constants.MAZE_COLS][Constants.MAZE_ROWS];
+		MazeCell[][] initialMaze = new MazeCell[MAZE_COLS][MAZE_ROWS];
 
-		for (int col = 0; col < Constants.MAZE_COLS; col++)
+		for (int col = 0; col < MAZE_COLS; col++)
 		{
-			for (int row = 0; row < Constants.MAZE_ROWS; row++)
+			for (int row = 0; row < MAZE_ROWS; row++)
 			{
 				boolean isWall = (col % 2 == 0) || (row % 2 == 0);
-				initialMaze[col][row] = new MazeCell(new Coord(col, row), isWall);
+				initialMaze[col][row] = new MazeCell(Coord.getCoord(col, row), isWall);
 			}
 		}
 
-		Coord bottomRight =  new Coord(MAZE_COLS - 2, MAZE_ROWS - 2);
-		
-		initialMaze = generateMaze(initialMaze, new ArrayList<Coord>(), bottomRight);
-		
+		initialMaze = generateMaze(initialMaze, new ArrayList<Coord>(), Coord.EXIT);
 		initialMaze = addPickups(initialMaze);
-		
-		initialMaze[bottomRight.col][bottomRight.row].isExit = true;
+		initialMaze[Coord.EXIT.col][Coord.EXIT.row].isExit = true;
 		
 		return initialMaze;
 	}
@@ -169,9 +165,9 @@ public class GameModel
 	private List<MazeCell> getLowerRightSpaces(MazeCell[][] maze2)
 	{
 		List<MazeCell> spaces = new ArrayList<MazeCell>();
-		for (int col = Constants.MAZE_COLS/2; col < Constants.MAZE_COLS; col++)
+		for (int col = MAZE_COLS/2; col < MAZE_COLS; col++)
 		{
-			for (int row = Constants.MAZE_ROWS/2; row < Constants.MAZE_ROWS; row++)
+			for (int row = MAZE_ROWS/2; row < MAZE_ROWS; row++)
 			{
 				MazeCell cell = maze2[col][row];
 				if (!cell.isWall)
@@ -233,13 +229,13 @@ public class GameModel
 
 	private List<Coord> getUnvisitedNeighbours(Coord c, MazeCell[][] currentMaze)
 	{
-		Coord[] coords = {new Coord(c.col + 2, c.row), new Coord(c.col - 2, c.row),
-						  new Coord(c.col, c.row - 2), new Coord(c.col, c.row + 2)};
+		Coord[] coords = {Coord.getCoord(c.col + 2, c.row), Coord.getCoord(c.col - 2, c.row),
+						  Coord.getCoord(c.col, c.row - 2), Coord.getCoord(c.col, c.row + 2)};
 		
 		List<Coord> goodCoords = new ArrayList<Coord>();
 		for (Coord coord : coords)
 		{
-			if (coord.isInsideMaze() && currentMaze[coord.col][coord.row].visited == false)
+			if (coord != null && currentMaze[coord.col][coord.row].visited == false)
 			{
 				goodCoords.add(coord);
 			}

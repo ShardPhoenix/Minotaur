@@ -1,6 +1,5 @@
 package com.minotaur;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Minotaur extends Mover
@@ -13,8 +12,6 @@ public class Minotaur extends Mover
 	{
 		coord = c;
 		lastCoord = c;
-		route = new ArrayList<Coord>();
-		route.add(c);
 		lastMoved = System.currentTimeMillis();
 		millisPerMove = Constants.INITIAL_MINOTAUR_MILLIS_PER_MOVE;
 		pathFinder = new PathFinder();
@@ -24,8 +21,7 @@ public class Minotaur extends Mover
 	{
 		coord = minotaurStart;
 		lastCoord = minotaurStart;
-		route = new ArrayList<Coord>();
-		route.add(minotaurStart);
+		route = null;
 		lastMoved = System.currentTimeMillis();
 		millisPerMove *= Constants.MINOTAUR_SPEED_UP;
 	}
@@ -49,10 +45,10 @@ public class Minotaur extends Mover
 	
 	private void move()
 	{
-		if (route != null && route.size() > 1)
+		if (route != null && route.size() > 0)
 		{
 			lastCoord = coord;
-			coord = route.get(1);
+			coord = route.get(0);
 			lastMoved = System.currentTimeMillis();
 		}
 	}
